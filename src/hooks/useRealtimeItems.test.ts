@@ -47,7 +47,9 @@ describe('useRealtimeItems', () => {
     const setItems = vi.fn()
     renderHook(() => useRealtimeItems('list-1', setItems))
 
-    const eventTypes = mockOn.mock.calls.map((call: unknown[]) => call[1])
+    const eventTypes = mockOn.mock.calls.map(
+      (call: unknown[]) => (call[1] as { event: string }).event
+    )
     expect(eventTypes).toContain('INSERT')
     expect(eventTypes).toContain('UPDATE')
     expect(eventTypes).toContain('DELETE')

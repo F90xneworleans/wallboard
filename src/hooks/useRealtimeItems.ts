@@ -10,29 +10,29 @@ export function useRealtimeItems(listId: string, setItems: SetItems) {
       .channel(`items:${listId}`)
       .on(
         'postgres_changes',
-        'INSERT',
-        { schema: 'public', table: 'items', filter: `list_id=eq.${listId}` },
-        (payload: { new: Item }) => {
+        { event: 'INSERT', schema: 'public', table: 'items', filter: `list_id=eq.${listId}` },
+        (payload) => {
+          const newItem = payload.new as Item
           setItems(prev => {
-            if (prev.some(i => i.id === payload.new.id)) return prev
-            return [...prev, payload.new]
+            if (prev.some(i => i.id === newItem.id)) return prev
+            return [...prev, newItem]
           })
         }
       )
       .on(
         'postgres_changes',
-        'UPDATE',
-        { schema: 'public', table: 'items', filter: `list_id=eq.${listId}` },
-        (payload: { new: Item }) => {
-          setItems(prev => prev.map(i => (i.id === payload.new.id ? payload.new : i)))
+        { event: 'UPDATE', schema: 'public', table: 'items', filter: `list_id=eq.${listId}` },
+        (payload) => {
+          const updated = payload.new as Item
+          setItems(prev => prev.map(i => (i.id === updated.id ? updated : i)))
         }
       )
       .on(
         'postgres_changes',
-        'DELETE',
-        { schema: 'public', table: 'items', filter: `list_id=eq.${listId}` },
-        (payload: { old: { id: string } }) => {
-          setItems(prev => prev.filter(i => i.id !== payload.old.id))
+        { event: 'DELETE', schema: 'public', table: 'items', filter: `list_id=eq.${listId}` },
+        (payload) => {
+          const deleted = payload.old as { id: string }
+          setItems(prev => prev.filter(i => i.id !== deleted.id))
         }
       )
       .subscribe()
