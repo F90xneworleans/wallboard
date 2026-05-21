@@ -47,9 +47,18 @@ export function ListsPage() {
     }
   }
 
+  async function handleSignOut() {
+    await supabase.auth.signOut()
+  }
+
   return (
     <div className="lists-page">
-      <h1>Wallboard</h1>
+      <header className="page-header">
+        <h1>Wallboard</h1>
+        <button onClick={handleSignOut} className="sign-out-button" type="button">
+          Sign Out
+        </button>
+      </header>
 
       <form onSubmit={createList} className="create-form">
         <input

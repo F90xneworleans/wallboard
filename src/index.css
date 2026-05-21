@@ -227,6 +227,86 @@ ul.items li button:hover {
   font-size: 0.9rem;
 }
 
+/* Page header */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+.sign-out-button {
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 8px 16px;
+}
+
+.sign-out-button:hover {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Login page */
+.login-page {
+  max-width: 400px;
+  margin: 80px auto 0;
+  padding: 32px 16px;
+}
+
+.login-page h1 {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.field input {
+  padding: 12px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field input:focus {
+  border-color: var(--color-primary);
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+}
+
 /* Empty state */
 p {
   color: var(--color-text-muted);

@@ -4,9 +4,12 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { ListsPage } from './ListsPage'
 
-const mockSelect = vi.fn()
-const mockInsert = vi.fn()
-const mockOrder = vi.fn()
+const { mockSelect, mockInsert, mockOrder, mockSignOut } = vi.hoisted(() => ({
+  mockSelect: vi.fn(),
+  mockInsert: vi.fn(),
+  mockOrder: vi.fn(),
+  mockSignOut: vi.fn(),
+}))
 
 vi.mock('../lib/supabase', () => ({
   supabase: {
@@ -19,6 +22,9 @@ vi.mock('../lib/supabase', () => ({
       }
       return {}
     }),
+    auth: {
+      signOut: mockSignOut,
+    },
   },
 }))
 
@@ -101,5 +107,20 @@ describe('ListsPage', () => {
     await waitFor(() => {
       expect(screen.getByText(/network error/i)).toBeInTheDocument()
     })
+  })
+
+  it('has a sign out button that calls supabase signOut', async () => {
+    const user = userEvent.setup()
+    mockSignOut.mockResolvedValue({ error: null })
+
+    renderWithRouter(<ListsPage />)
+    await waitFor(() => {
+      expect(screen.getByText('Weekly Groceries')).toBeInTheDocument()
+    })
+
+    const signOutButton = screen.getByRole('button', { name: /sign out/i })
+    await user.click(signOutButton)
+
+    expect(mockSignOut).toHaveBeenCalled()
   })
 })
