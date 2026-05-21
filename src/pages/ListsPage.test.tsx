@@ -4,11 +4,12 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { ListsPage } from './ListsPage'
 
-const { mockSelect, mockInsert, mockOrder, mockSignOut } = vi.hoisted(() => ({
+const { mockSelect, mockInsert, mockOrder, mockSignOut, mockDeleteEq } = vi.hoisted(() => ({
   mockSelect: vi.fn(),
   mockInsert: vi.fn(),
   mockOrder: vi.fn(),
   mockSignOut: vi.fn(),
+  mockDeleteEq: vi.fn(),
 }))
 
 vi.mock('../lib/supabase', () => ({
@@ -18,6 +19,7 @@ vi.mock('../lib/supabase', () => ({
         return {
           select: mockSelect,
           insert: mockInsert,
+          delete: vi.fn().mockReturnValue({ eq: mockDeleteEq }),
         }
       }
       return {}
@@ -106,6 +108,24 @@ describe('ListsPage', () => {
     renderWithRouter(<ListsPage />)
     await waitFor(() => {
       expect(screen.getByText(/network error/i)).toBeInTheDocument()
+    })
+  })
+
+  it('can delete a list', async () => {
+    const user = userEvent.setup()
+    mockDeleteEq.mockResolvedValue({ error: null })
+
+    renderWithRouter(<ListsPage />)
+    await waitFor(() => {
+      expect(screen.getByText('Weekly Groceries')).toBeInTheDocument()
+    })
+
+    const deleteButtons = screen.getAllByRole('button', { name: /delete/i })
+    await user.click(deleteButtons[0])
+
+    await waitFor(() => {
+      expect(mockDeleteEq).toHaveBeenCalledWith('id', '1')
+      expect(screen.queryByText('Weekly Groceries')).not.toBeInTheDocument()
     })
   })
 

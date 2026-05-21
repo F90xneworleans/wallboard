@@ -47,6 +47,19 @@ export function ListsPage() {
     }
   }
 
+  async function deleteList(listId: string) {
+    const { error } = await supabase
+      .from('lists')
+      .delete()
+      .eq('id', listId)
+
+    if (error) {
+      setError(error.message)
+    } else {
+      setLists(prev => prev.filter(l => l.id !== listId))
+    }
+  }
+
   async function handleSignOut() {
     await supabase.auth.signOut()
   }
@@ -87,6 +100,14 @@ export function ListsPage() {
               <span className="list-name">{list.name}</span>
               <span className="list-type">{list.list_type}</span>
             </Link>
+            <button
+              onClick={() => deleteList(list.id)}
+              className="delete-list-button"
+              type="button"
+              aria-label="Delete"
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>
